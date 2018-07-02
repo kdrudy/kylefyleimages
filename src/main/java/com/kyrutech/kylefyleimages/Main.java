@@ -23,7 +23,7 @@ public class Main {
         if(args.length > 0) {
             if(Files.isDirectory(Paths.get(args[0]))) {
                 originalDirectory = args[0];
-                loadImagesFile(args[0]);
+//                loadImagesFile(args[0]);
 
 
                 staticFiles.externalLocation(args[0]);
@@ -37,6 +37,10 @@ public class Main {
                 model.put("hasError", true);
                 model.put("error", "No directory argument to display.");
             } else {
+                if(Files.isDirectory(Paths.get(args[0]))) {
+                    imageFiles = new ArrayList<>();
+                    loadImagesFile(args[0]);
+                }
 
                 String currentDirectory = req.queryParams("directory");
                 if(currentDirectory != null && !currentDirectory.isEmpty()) {
