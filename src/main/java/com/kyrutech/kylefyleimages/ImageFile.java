@@ -4,10 +4,19 @@ public class ImageFile {
 
     String directory;
     String fileName;
+    boolean current = false;
 
     public ImageFile(String directory, String fileName) {
         this.directory = directory;
         this.fileName = fileName;
+    }
+
+    public boolean isCurrent() {
+        return current;
+    }
+
+    public void setCurrent(boolean current) {
+        this.current = current;
     }
 
     public String getDirectory() {

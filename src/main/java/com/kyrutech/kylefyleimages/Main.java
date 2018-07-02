@@ -37,36 +37,42 @@ public class Main {
                 model.put("hasError", true);
                 model.put("error", "No directory argument to display.");
             } else {
-                model.put("directory", originalDirectory);
 
-                String currentDirectory = req.attribute("directory");
+                String currentDirectory = req.queryParams("directory");
                 if(currentDirectory != null && !currentDirectory.isEmpty()) {
                     model.put("currentDirectory", currentDirectory);
 
-                    List<ImageFile> directories = imageFiles.stream()
-                            .filter((i) -> i.getDirectory() != null && i.getDirectory().equals(currentDirectory))
-                            .filter((i) -> i.getFileName() == null || i.getFileName().isEmpty())
-                            .collect(Collectors.toList());
-                    model.put("directories", directories);
-
                     List<ImageFile> images = imageFiles.stream()
                             .filter((i) -> i.getDirectory() != null && i.getDirectory().equals(currentDirectory))
-                            .filter((i) -> i.getDirectory() == null || i.getDirectory().isEmpty())
+                            .filter((i) -> i.getFileName() != null && !i.getFileName().isEmpty())
                             .collect(Collectors.toList());
                     model.put("images", images);
 
                 } else { //For the root
 
-                    List<ImageFile> directories = imageFiles.stream()
-                            .filter((i) -> i.getFileName() == null || i.getFileName().isEmpty())
-                            .collect(Collectors.toList());
-                    model.put("directories", directories);
+
 
                     List<ImageFile> images = imageFiles.stream()
                             .filter((i) -> i.getDirectory() == null || i.getDirectory().isEmpty())
                             .collect(Collectors.toList());
                     model.put("images", images);
                 }
+
+                List<ImageFile> directories = imageFiles.stream()
+                        .filter((i) -> i.getFileName() == null || i.getFileName().isEmpty())
+                        .collect(Collectors.toList());
+
+                directories.forEach((d)->{
+                    if (d.getDirectory().equals(currentDirectory)) {
+                        d.setCurrent(true);
+                    } else {
+                        d.setCurrent(false);
+                    }
+                });
+
+                model.put("directories", directories);
+
+                model.put("directory", originalDirectory + File.separator);
             }
             return new MustacheTemplateEngine().render(
                     new ModelAndView(model, "index.html")
@@ -86,11 +92,13 @@ public class Main {
                             e.printStackTrace();
                         }
                     } else {
-                        String subDirectory = p.getParent().toString().replace(originalDirectory , "");
-                        if(subDirectory.startsWith("\\")) {
-                            subDirectory = subDirectory.substring(1);
+                        if(!p.getFileName().toString().startsWith(".")) { //We don't need to worry about hidden files
+                            String subDirectory = p.getParent().toString().replace(originalDirectory, "");
+                            if (subDirectory.startsWith(File.separator)) {
+                                subDirectory = subDirectory.substring(1);
+                            }
+                            imageFiles.add(new ImageFile(subDirectory, p.getFileName().toString()));
                         }
-                        imageFiles.add(new ImageFile(subDirectory, p.getFileName().toString()));
                     }
                 });
     }

@@ -24,25 +24,52 @@
         {{/hasError}}
         {{^hasError}}
         <div class="row">
-            <h3 class="col">Displaying images from {{directory}}</h3>
+            <h3 class="col">Displaying images from {{directory}}{{currentDirectory}}</h3>
         </div>
 
         <div class="row">
-            <strong class="col-12">Additional Directories:</strong>
+            <strong class="col-12">Available Directories:</strong>
         </div>
         <div class="row mb-3">
             <div class="col-12">
-                {{#directories}}
-                <a href="/?directory={{directory}}">{{directory}}</a>&nbsp;
-                {{/directories}}
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        {{#currentDirectory}}
+                            <a class="nav-link" href="/">Top Level</a>
+                        {{/currentDirectory}}
+                        {{^currentDirectory}}
+                            <a class="nav-link active" href="/">Top Level</a>
+                        {{/currentDirectory}}
+                    </li>
+                    {{#directories}}
+                    <li class="nav-item">
+                        {{#current}}
+                            <a class="nav-link active" href="/?directory={{directory}}">{{directory}}</a>
+                        {{/current}}
+                        {{^current}}
+                            <a class="nav-link" href="/?directory={{directory}}">{{directory}}</a>
+                        {{/current}}
+                    </li>
+                    {{/directories}}
+                </ul>
+
+
             </div>
         </div>
         <div class="row bg-dark p-3">
             {{#images}}
                 <div class="col-4">
-                    <a href="{{fileName}}">
-                        <img src="{{fileName}}" class="img-fluid img-thumbnail"/>
-                    </a>
+                    {{#currentDirectory}}
+                        <a href="{{currentDirectory}}/{{fileName}}">
+                            <img src="{{currentDirectory}}/{{fileName}}" class="img-fluid img-thumbnail"/>
+                        </a>
+                    {{/currentDirectory}}
+                    {{^currentDirectory}}
+                        <a href="{{fileName}}">
+                            <img src="{{fileName}}" class="img-fluid img-thumbnail"/>
+                        </a>
+                    {{/currentDirectory}}
+
                 </div>
             {{/images}}
         </div>
