@@ -49,6 +49,7 @@ public class Main {
                     List<ImageFile> images = imageFiles.stream()
                             .filter((i) -> i.getDirectory() != null && i.getDirectory().equals(currentDirectory))
                             .filter((i) -> i.getFileName() != null && !i.getFileName().isEmpty())
+                            .sorted(Comparator.comparing(ImageFile::getFileName))
                             .collect(Collectors.toList());
                     model.put("images", images);
 
@@ -58,6 +59,7 @@ public class Main {
 
                     List<ImageFile> images = imageFiles.stream()
                             .filter((i) -> i.getDirectory() == null || i.getDirectory().isEmpty())
+                            .sorted(Comparator.comparing(ImageFile::getFileName))
                             .collect(Collectors.toList());
                     model.put("images", images);
                 }
