@@ -60,11 +60,13 @@
             {{#images}}
                 <div class="col-4">
                     {{#currentDirectory}}
+                        <span class="text-light">{{fileName}}</span><br/>
                         <a href="{{currentDirectory}}/{{fileName}}">
                             <img src="{{currentDirectory}}/{{fileName}}" class="img-fluid img-thumbnail m-2"/>
                         </a>
                     {{/currentDirectory}}
                     {{^currentDirectory}}
+                        <span class="text-light">{{fileName}}</span><br/>
                         <a href="{{fileName}}">
                             <img src="{{fileName}}" class="img-fluid img-thumbnail m-2"/>
                         </a>
@@ -72,6 +74,25 @@
 
                 </div>
             {{/images}}
+        </div>
+
+        <div class="row p-3">
+            <ul class="pagination">
+                {{#currentDirectory}}
+                    {{#pages}}
+                    <li class="page-item">
+                        <a class="page-link" href="?directory={{currentDirectory}}&page={{.}}&count=9">{{.}}</a>
+                    </li>
+                    {{/pages}}
+                {{/currentDirectory}}
+                {{^currentDirectory}}
+                    {{#pages}}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{.}}&count=9">{{.}}</a>
+                    </li>
+                    {{/pages}}
+                {{/currentDirectory}}
+            </ul>
         </div>
         {{/hasError}}
     </div>

@@ -43,15 +43,34 @@ public class Main {
                 }
 
                 String currentDirectory = req.queryParams("directory");
+                int count = Integer.parseInt(req.queryParamOrDefault("count", "9"));
+                int page = Integer.parseInt(req.queryParamOrDefault("page", "1"));
+
+                model.put("page", page);
+                model.put("count", count);
+
                 if(currentDirectory != null && !currentDirectory.isEmpty()) {
                     model.put("currentDirectory", currentDirectory);
 
                     List<ImageFile> images = imageFiles.stream()
                             .filter((i) -> i.getDirectory() != null && i.getDirectory().equals(currentDirectory))
                             .filter((i) -> i.getFileName() != null && !i.getFileName().isEmpty())
-                            .sorted(Comparator.comparing(ImageFile::getFileName))
+                            .sorted(Comparator.comparing(ImageFile::getFileName).reversed())
+                            .skip(count * (page-1))
+                            .limit(count)
                             .collect(Collectors.toList());
                     model.put("images", images);
+
+                    List<Integer> pages = new ArrayList<>();
+                    long totalImages = imageFiles.stream()
+                            .filter((i) -> i.getDirectory() != null && i.getDirectory().equals(currentDirectory))
+                            .filter((i) -> i.getFileName() != null && !i.getFileName().isEmpty())
+                            .count();
+                    long totalPages = totalImages/count + (totalImages%count == 0 ? 0 : 1);
+                    for(int i = 1;i<=totalPages;i++) {
+                        pages.add(i);
+                    }
+                    model.put("pages", pages);
 
                 } else { //For the root
 
@@ -60,8 +79,20 @@ public class Main {
                     List<ImageFile> images = imageFiles.stream()
                             .filter((i) -> i.getDirectory() == null || i.getDirectory().isEmpty())
                             .sorted(Comparator.comparing(ImageFile::getFileName))
+                            .skip(count * page)
+                            .limit(count)
                             .collect(Collectors.toList());
                     model.put("images", images);
+
+                    List<Integer> pages = new ArrayList<>();
+                    long totalImages = imageFiles.stream()
+                            .filter((i) -> i.getDirectory() == null || i.getDirectory().isEmpty())
+                            .count();
+                    long totalPages = totalImages/count + (totalImages%count == 0 ? 0 : 1);
+                    for(int i = 1;i<=totalPages;i++) {
+                        pages.add(i);
+                    }
+                    model.put("pages", pages);
                 }
 
                 List<ImageFile> directories = imageFiles.stream()
