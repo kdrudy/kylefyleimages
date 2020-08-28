@@ -78,7 +78,7 @@ public class Main {
 
                     List<ImageFile> images = imageFiles.stream()
                             .filter((i) -> i.getDirectory() == null || i.getDirectory().isEmpty())
-                            .sorted(Comparator.comparing(ImageFile::getFileName))
+                            .sorted(Comparator.comparing(ImageFile::getFileName).reversed())
                             .skip(count * page)
                             .limit(count)
                             .collect(Collectors.toList());
